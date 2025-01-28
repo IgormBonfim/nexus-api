@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -12,10 +13,19 @@ type userController struct {
 	userUsecase usecase.UserUsecase
 }
 
+func NewUserController(usecase *usecase.UserUsecase) *userController {
+	return &userController{
+		userUsecase: *usecase,
+	}
+}
+
 func (p *userController) CreateUser(ctx *gin.Context) {
 
 	var user *entities.User
-	err := ctx.BindJSON(&user)
+	err := ctx.ShouldBindBodyWithJSON(&user)
+
+	fmt.Println(user)
+	fmt.Println(err)
 
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, err)
