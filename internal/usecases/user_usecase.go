@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"github.com/igormbonfim/nexus/internal/domain/entities"
+	"github.com/igormbonfim/nexus/internal/dtos/requests"
 	repository "github.com/igormbonfim/nexus/internal/infra/repositories"
 )
 
@@ -15,6 +16,6 @@ func NewUserUsecase(repository *repository.UserRepository) *UserUsecase {
 	}
 }
 
-func (u *UserUsecase) CreateUser(user *entities.User) (*entities.User, error) {
+func (u *UserUsecase) CreateUser(user *requests.CreateUserDto) (*entities.User, error) {
 	return nil, nil
 }
