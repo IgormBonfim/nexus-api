@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/igormbonfim/nexus/internal/dtos/requests"
-	usecase "github.com/igormbonfim/nexus/internal/usecases"
+	"github.com/igormbonfim/nexus-api/internal/dtos/requests"
+	usecase "github.com/igormbonfim/nexus-api/internal/usecases"
 )
 
 type userController struct {

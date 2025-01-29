@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
-	"github.com/igormbonfim/nexus/internal/dtos/requests"
+	"github.com/igormbonfim/nexus-api/internal/dtos/requests"
 )
 
 var routeValidationMap = map[string]interface{}{

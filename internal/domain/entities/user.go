@@ -1,9 +1,11 @@
 package entities
 
 import (
+	"errors"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/igormbonfim/nexus-api/internal/utils"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -23,6 +25,11 @@ func CreateUser(email, nickname, password string) (*User, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, err
+	}
+
+	emailIsValid := utils.IsValidEmail(email)
+	if !emailIsValid {
+		return nil, errors.New("invalid email format")
 	}
 
 	user := &User{

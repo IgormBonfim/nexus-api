@@ -2,11 +2,11 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/igormbonfim/nexus/internal/infra/database"
-	repository "github.com/igormbonfim/nexus/internal/infra/repositories"
-	controller "github.com/igormbonfim/nexus/internal/interfaces/controllers"
-	"github.com/igormbonfim/nexus/internal/interfaces/middlewares"
-	usecase "github.com/igormbonfim/nexus/internal/usecases"
+	"github.com/igormbonfim/nexus-api/internal/infra/database"
+	repository "github.com/igormbonfim/nexus-api/internal/infra/repositories"
+	controller "github.com/igormbonfim/nexus-api/internal/interfaces/controllers"
+	"github.com/igormbonfim/nexus-api/internal/interfaces/middlewares"
+	usecase "github.com/igormbonfim/nexus-api/internal/usecases"
 )
 
 func RegisterRoutes(router *gin.Engine) {

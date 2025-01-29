@@ -1,4 +1,4 @@
-module github.com/igormbonfim/nexus
+module github.com/igormbonfim/nexus-api
 
 go 1.23.5
 

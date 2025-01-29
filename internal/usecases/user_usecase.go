@@ -1,9 +1,9 @@
 package usecase
 
 import (
-	"github.com/igormbonfim/nexus/internal/domain/entities"
-	"github.com/igormbonfim/nexus/internal/dtos/requests"
-	repository "github.com/igormbonfim/nexus/internal/infra/repositories"
+	"github.com/igormbonfim/nexus-api/internal/domain/entities"
+	"github.com/igormbonfim/nexus-api/internal/dtos/requests"
+	repository "github.com/igormbonfim/nexus-api/internal/infra/repositories"
 )
 
 type UserUsecase struct {

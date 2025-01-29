@@ -4,8 +4,8 @@ import (
 	"log"
 
 	"github.com/gin-gonic/gin"
-	"github.com/igormbonfim/nexus/internal/infra/database"
-	"github.com/igormbonfim/nexus/internal/interfaces/routes"
+	"github.com/igormbonfim/nexus-api/internal/infra/database"
+	"github.com/igormbonfim/nexus-api/internal/interfaces/routes"
 )
 
 func main() {
