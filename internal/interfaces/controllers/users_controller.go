@@ -4,42 +4,35 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/igormbonfim/nexus/internal/dtos"
 	"github.com/igormbonfim/nexus/internal/dtos/requests"
 	usecase "github.com/igormbonfim/nexus/internal/usecases"
 )
 
 type userController struct {
-	validator   dtos.Validator
 	userUsecase usecase.UserUsecase
 }
 
-func NewUserController(usecase *usecase.UserUsecase, validator *dtos.Validator) *userController {
+func NewUserController(usecase *usecase.UserUsecase) *userController {
 	return &userController{
-		validator:   *validator,
 		userUsecase: *usecase,
 	}
 }
 
 func (p *userController) CreateUser(ctx *gin.Context) {
 
-	var userDto requests.CreateUserDto
-	err := ctx.BindJSON(&userDto)
-
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, err)
+	validatedData, exists := ctx.Get("validatedData")
+	if !exists {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Validated data not found"})
 		return
 	}
 
-	err = p.validator.ValidateStruct(&userDto)
-
-	if err != nil {
-		formattedErrors := p.validator.FormatValidationErrors(err)
-		ctx.JSON(http.StatusBadRequest, gin.H{"errors": formattedErrors})
+	userDto, ok := validatedData.(*requests.CreateUserDto)
+	if !ok {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid data type"})
 		return
 	}
 
-	user, err := p.userUsecase.CreateUser(&userDto)
+	user, err := p.userUsecase.CreateUser(userDto)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)
