@@ -16,6 +16,19 @@ func NewUserUsecase(repository *repository.UserRepository) *UserUsecase {
 	}
 }
 
-func (u *UserUsecase) CreateUser(user *requests.CreateUserDto) (*entities.User, error) {
-	return nil, nil
+func (u *UserUsecase) CreateUser(request *requests.CreateUserDto) (*entities.User, error) {
+
+	user, err := entities.CreateUser(request.Email, request.Username, request.Password)
+	if err != nil {
+		return nil, err
+	}
+
+	id, err := u.repository.InsertUser(user)
+	if err != nil {
+		return nil, err
+	}
+
+	user.ID = id
+
+	return user, nil
 }

@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/igormbonfim/nexus-api/internal/infra/database"
-	"github.com/igormbonfim/nexus-api/internal/interfaces/routes"
+	"github.com/igormbonfim/nexus-api/internal/api/routes"
 )
 
 func main() {

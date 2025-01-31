@@ -2,10 +2,10 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
+	controller "github.com/igormbonfim/nexus-api/internal/api/controllers"
+	"github.com/igormbonfim/nexus-api/internal/api/middlewares"
 	"github.com/igormbonfim/nexus-api/internal/infra/database"
 	repository "github.com/igormbonfim/nexus-api/internal/infra/repositories"
-	controller "github.com/igormbonfim/nexus-api/internal/interfaces/controllers"
-	"github.com/igormbonfim/nexus-api/internal/interfaces/middlewares"
 	usecase "github.com/igormbonfim/nexus-api/internal/usecases"
 )
 
