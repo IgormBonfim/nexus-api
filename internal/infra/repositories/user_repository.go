@@ -20,14 +20,14 @@ func NewUserRepository(connection *sql.DB) *UserRepository {
 func (repo *UserRepository) InsertUser(user *entities.User) (int, error) {
 	var id int
 	query, err := repo.db.Prepare("INSERT INTO users" +
-		"(username, hashed_password, email, created_at, updated_at)" +
-		"VALUES ($1, $2, $3, $4, $5) returning id")
+		"(public_key, username, hashed_password, email, created_at, updated_at)" +
+		"VALUES ($1, $2, $3, $4, $5, $6) returning id")
 	if err != nil {
 		fmt.Println(err)
 		return 0, err
 	}
 
-	err = query.QueryRow(user.Username, user.HashedPassword, user.Email, user.CreatedAt, user.UpdatedAt).Scan(&id)
+	err = query.QueryRow(user.PublicKey, user.Username, user.HashedPassword, user.Email, user.CreatedAt, user.UpdatedAt).Scan(&id)
 	if err != nil {
 		fmt.Println(err)
 		return 0, err
