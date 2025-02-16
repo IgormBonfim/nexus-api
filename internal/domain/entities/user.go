@@ -9,7 +9,12 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-var ErrInvalidEmailFormat = errors.New("invalid email format")
+var (
+	ErrInvalidEmailFormat = errors.New("invalid email format")
+	ErrEmailTooLong       = errors.New("email cannot exceed 255 characters")
+	ErrUsernameTooLong    = errors.New("username cannot exceed 50 characters")
+	ErrUsernameTooShort   = errors.New("username must have at least 3 characters")
+)
 
 type User struct {
 	ID             int       `json:"-"`
@@ -24,24 +29,58 @@ type User struct {
 func CreateUser(email, username, password string) (*User, error) {
 	publicKey := uuid.New().String()
 
+	if err := validateUsername(username); err != nil {
+		return nil, err
+	}
+
+	if err := validateEmail(email); err != nil {
+		return nil, err
+	}
+
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, err
 	}
 
-	emailIsValid := utils.IsValidEmail(email)
-	if !emailIsValid {
-		return nil, ErrInvalidEmailFormat
-	}
+	now := time.Now()
 
 	user := &User{
 		PublicKey:      publicKey,
 		Email:          email,
 		Username:       username,
 		HashedPassword: string(hashedPassword),
-		CreatedAt:      time.Now(),
-		UpdatedAt:      time.Now(),
+		CreatedAt:      now,
+		UpdatedAt:      now,
 	}
 
 	return user, nil
+}
+
+func validateUsername(username string) error {
+	len := len(username)
+
+	if len > 50 {
+		return ErrUsernameTooLong
+	}
+
+	if len < 3 {
+		return ErrUsernameTooShort
+	}
+
+	return nil
+}
+
+func validateEmail(email string) error {
+	len := len(email)
+
+	if len > 50 {
+		return ErrEmailTooLong
+	}
+
+	emailIsValid := utils.IsValidEmail(email)
+	if !emailIsValid {
+		return ErrInvalidEmailFormat
+	}
+
+	return nil
 }

@@ -3,36 +3,35 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"log"
+	"os"
 
 	_ "github.com/lib/pq"
 )
 
 var DB *sql.DB
 
-const (
-	host     = "localhost"
-	port     = 5432
-	user     = "postgres"
-	password = "1234"
-	dbname   = "postgres"
-)
-
 func Connect() error {
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	host := os.Getenv("DB_HOST")
+	port := os.Getenv("DB_PORT")
+	dbname := os.Getenv("DB_NAME")
 
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
 
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
-		return fmt.Errorf("Erro ao conectar com o banco de dados: %v", err)
+		log.Fatal("Erro ao conectar ao banco de dados:", err)
 	}
 
 	if err := db.Ping(); err != nil {
-		return fmt.Errorf("Erro ao conectar ao banco de dados: %v", err)
+		log.Fatal("Banco de dados não está respondendo:", err)
 	}
 
-	fmt.Printf("Conectado: %s", dbname)
+	fmt.Printf("✅ conectado: %s com sucesso!\n", dbname)
 
 	DB = db
 	return nil

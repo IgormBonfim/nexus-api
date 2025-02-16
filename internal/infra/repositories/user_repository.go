@@ -54,8 +54,43 @@ func (repo *UserRepository) GetUserByEmail(email string) (*entities.User, error)
 		&user.ID,
 		&user.PublicKey,
 		&user.Username,
-		&user.Email,
 		&user.HashedPassword,
+		&user.Email,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+
+		fmt.Println(err)
+		return nil, err
+	}
+
+	query.Close()
+	return &user, nil
+}
+
+func (repo *UserRepository) GetUserByUsername(username string) (*entities.User, error) {
+	queryString := "SELECT * FROM users WHERE users.username = $1"
+
+	query, err := repo.db.Prepare(queryString)
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	var user entities.User
+
+	err = query.QueryRow(username).Scan(
+		&user.ID,
+		&user.PublicKey,
+		&user.Username,
+		&user.HashedPassword,
+		&user.Email,
 		&user.CreatedAt,
 		&user.UpdatedAt,
 	)
