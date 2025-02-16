@@ -9,6 +9,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+var ErrInvalidEmailFormat = errors.New("invalid email format")
+
 type User struct {
 	ID             int       `json:"-"`
 	PublicKey      string    `json:"public_key"`
@@ -29,7 +31,7 @@ func CreateUser(email, username, password string) (*User, error) {
 
 	emailIsValid := utils.IsValidEmail(email)
 	if !emailIsValid {
-		return nil, errors.New("invalid email format")
+		return nil, ErrInvalidEmailFormat
 	}
 
 	user := &User{

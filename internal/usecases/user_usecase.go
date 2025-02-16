@@ -1,16 +1,26 @@
-package usecase
+package usecases
 
 import (
+	"errors"
+	"fmt"
+	"os"
+	"time"
+
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/igormbonfim/nexus-api/internal/domain/entities"
 	"github.com/igormbonfim/nexus-api/internal/dtos/requests"
-	repository "github.com/igormbonfim/nexus-api/internal/infra/repositories"
+	"github.com/igormbonfim/nexus-api/internal/infra/repositories"
+	"golang.org/x/crypto/bcrypt"
 )
 
+var ErrRegisteredEmail = errors.New("this email address is already registered. please use a different one")
+var ErrInvalidCredentials = errors.New("please check your username and password and try again.")
+
 type UserUsecase struct {
-	repository *repository.UserRepository
+	repository *repositories.UserRepository
 }
 
-func NewUserUsecase(repository *repository.UserRepository) *UserUsecase {
+func NewUserUsecase(repository *repositories.UserRepository) *UserUsecase {
 	return &UserUsecase{
 		repository: repository,
 	}
@@ -20,7 +30,16 @@ func (u *UserUsecase) CreateUser(request *requests.CreateUserDto) (*entities.Use
 
 	user, err := entities.CreateUser(request.Email, request.Username, request.Password)
 	if err != nil {
+		return nil, fmt.Errorf("user creation failed: %w", err)
+	}
+
+	userExists, err := u.repository.GetUserByEmail(user.Email)
+	if err != nil {
 		return nil, err
+	}
+
+	if userExists != nil {
+		return nil, ErrRegisteredEmail
 	}
 
 	id, err := u.repository.InsertUser(user)
@@ -31,4 +50,35 @@ func (u *UserUsecase) CreateUser(request *requests.CreateUserDto) (*entities.Use
 	user.ID = id
 
 	return user, nil
+}
+
+func (u *UserUsecase) LoginUser(request *requests.LoginDto) (string, error) {
+	jwtKey := []byte(os.Getenv("jwtKey"))
+
+	user, err := u.repository.GetUserByEmail(request.Email)
+	if err != nil {
+		return "", err
+	}
+	if user == nil {
+		return "", ErrInvalidCredentials
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.HashedPassword), []byte(request.Password))
+	if err != nil {
+		return "", ErrInvalidCredentials
+	}
+
+	expirationTime := time.Now().Add(1 * time.Hour)
+	claims := jwt.RegisteredClaims{
+		Subject:   request.Email,
+		ExpiresAt: jwt.NewNumericDate(expirationTime),
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString(jwtKey)
+	if err != nil {
+		return "", err
+	}
+
+	return tokenString, nil
 }

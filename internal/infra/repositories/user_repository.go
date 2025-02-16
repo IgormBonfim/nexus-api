@@ -1,4 +1,4 @@
-package repository
+package repositories
 
 import (
 	"database/sql"
@@ -36,4 +36,39 @@ func (repo *UserRepository) InsertUser(user *entities.User) (int, error) {
 	query.Close()
 
 	return id, nil
+}
+
+func (repo *UserRepository) GetUserByEmail(email string) (*entities.User, error) {
+	queryString := "SELECT * FROM users WHERE users.email = $1"
+
+	query, err := repo.db.Prepare(queryString)
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	var user entities.User
+
+	err = query.QueryRow(email).Scan(
+		&user.ID,
+		&user.PublicKey,
+		&user.Username,
+		&user.Email,
+		&user.HashedPassword,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+
+		fmt.Println(err)
+		return nil, err
+	}
+
+	query.Close()
+	return &user, nil
 }

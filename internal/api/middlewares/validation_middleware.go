@@ -12,6 +12,7 @@ import (
 
 var routeValidationMap = map[string]interface{}{
 	"/api/users": requests.CreateUserDto{},
+	"/api/login": requests.LoginDto{},
 }
 
 func ValidatorMiddleware() gin.HandlerFunc {
